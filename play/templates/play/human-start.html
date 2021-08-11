@@ -1,0 +1,40 @@
+{% extends 'home/base.html' %}
+
+{% load static %}
+
+{% block style %}
+
+{% endblock style %}
+
+{% block content %}
+
+
+	<section id="body">
+
+		<div class="container mt-5">
+			<h1 class="text-center waiting-text">Waiting for your partner to join</h1>
+		</div>
+
+	</section>
+
+	<script>
+		$(function(){
+			var rep = setInterval(waitForOpponent,2000);
+			
+			function waitForOpponent() {
+				$.ajax({
+					type:'GET',
+					url:"{% url 'play:wait-for-opponent' %}",
+					success:function(json) {
+						if(json.playersJoined) {
+							clearInterval(rep);
+							return location.replace("{% url 'play:human-game-start' %}")
+						}
+					}
+				});
+			}
+		});
+	</script>
+
+
+{% endblock content %}

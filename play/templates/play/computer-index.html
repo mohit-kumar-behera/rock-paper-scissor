@@ -1,0 +1,35 @@
+{% extends 'home/base.html' %}
+
+{% load static %}
+
+{% block style %}
+
+{% endblock style %}
+
+{% block content %}
+
+	<section id="body" class="mt-5">
+		<div class="container p-2 mt-4 rounded shadow" style="background:#153e90">
+			<div class="row">
+				<div class="col-4 text-center">
+					<img src="{% static 'home/image/rock.png' %}" class="rps-img"/>
+				</div>
+				<div class="col-4 text-center">
+					<img src="{% static 'home/image/paper.png' %}" class="rps-img"/>
+				</div>
+				<div class="col-4 text-center">
+					<img src="{% static 'home/image/scissor.png' %}" class="rps-img"/>
+				</div>
+			</div>
+		</div>
+		<div class="container mt-5">
+			<div class="d-flex flex-wrap justify-content-around">
+				<a href="{% url 'play:start-game' 3 %}"><button type="button" class="rps-btn points-btn computer pl-4 pr-4 m-2 rounded">3 Pointer</button></a>
+				<a href="{% url 'play:start-game' 5 %}"><button type="button" class="rps-btn points-btn computer pl-4 pr-4 m-2 rounded">5 Pointer</button></a>
+				<a href="{% url 'play:start-game' 10 %}"><button type="button" class="rps-btn points-btn computer pl-4 pr-4 m-2 rounded">10 Pointer</button></a>
+			</div>
+		</div>
+	</section>
+
+{% endblock content %}
+

@@ -1,0 +1,137 @@
+{% extends 'home/base.html' %}
+
+{% load static %}
+
+{% block style %}
+
+{% endblock style %}
+
+{% block content %}
+
+	<section id="body" class="mt-5">
+		<div class="container p-2 text-center mt-4">
+			<h5 class="share-text" style="color:#fffaa4">Share this ID with your freind</h5>
+			<div class="input-group w-responsive mx-auto">
+			    <input type="text" class="form-control text-center" id="unique-id" readonly value="{{ ID }}">
+			    <div class="input-group-btn">
+			      <button class="btn btn-info copy-btn" type="submit" title="Copy" data-placement="top" data-toggle="tooltip">
+			        <i class="fas fa-clipboard"></i>
+			      </button>
+			    </div>
+			</div>
+		</div>
+		<div class="container mt-5">
+			<h4 class="text-center font-michroma" style="color:#54e346">Login to Play the Game</h4>
+			<div class="row mt-5">
+				<div class="col-lg-5 p-3">
+					<h5 class="text-light">Instruction</h5>
+					<ul style="color:#fffaa4">
+						<li>Share the unique code above with your friend to play.</li>				
+						<li>Either Player 1 share his key for both to Login or Player 2 share his Key for Login</li>
+						<li>In this Login, Both the players should enter the same key in order to get register for the game</li>
+						<li>Both the Player should select the Same points or it will be the mean of two different selected points.</li>
+						<li>Don't Go for same name.</li>
+					</ul>
+				</div>
+				<div class="col-lg-7 text-center p-3 rounded shadow" style="border:2px solid #fffaa4">
+					<form action="{% url 'play:human' %}" method="post">
+
+						{% csrf_token %}
+					  
+					  <div class="form-group mt-2">
+					    <input type="text" class="form-control" name="unique-id" id="unique-id-login" placeholder="Enter your Unique Key" autocomplete="false" required spellcheck="false">
+					  </div>
+
+					  <div class="form-group mt-3">
+						  <div class="radio row">
+						  	<div class="col-lg-4">	
+						  		<button type="button" class="rps-btn points-btn human pl-4 pr-4 mt-2 rounded w-100" onclick="radioSelectPoint(this)">10 Pointer<input type="radio" name="points" required value="10"></button>
+						  	</div>
+						  	<div class="col-lg-4">
+						  		<button type="button" class="rps-btn points-btn human pl-4 pr-4 mt-2 rounded w-100" onclick="radioSelectPoint(this)">15 Pointer<input type="radio" name="points" required value="15"></button>
+						  	</div>
+						  	<div class="col-lg-4">
+						  		<button type="button" class="rps-btn points-btn human pl-4 pr-4 mt-2 rounded w-100" onclick="radioSelectPoint(this)">20 Pointer<input type="radio" name="points" required value="20"></button>
+						  	</div>					    
+						  </div>
+						</div>
+
+						<div class="form-group mt-2">
+							<div class="row">
+								<div class="col-lg-6 col-md-6">
+									<input type="text" class='form-control w-100 mb-1' name="name" id="login-name" placeholder="Enter You Name" autocomplete="false" required spellcheck="false">
+								</div>
+								<div class="col-lg-6 col-md-6">
+									<button type="submit" class="btn btn-success w-100 font-michroma play-btn mb-1">Play</button>
+								</div>
+							</div>	
+					  	</div>
+					  
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script>
+		$(function(){
+			$('[data-toggle="tooltip"]').tooltip();
+		})
+	</script>
+
+	<script>
+		const copyBtn = document.getElementsByClassName("copy-btn")[0];
+		const uniqueInp = document.getElementById("unique-id");
+		var shareText = document.getElementsByClassName("share-text")[0];
+		
+		copyBtn.onclick = function() {
+			uniqueInpVal = uniqueInp.getAttribute("value");
+
+			navigator.clipboard.writeText(uniqueInpVal).then(function(){
+				//copying to clipboard successfull
+				shareText.innerHTML = "ID Copied successfully"
+				uniqueInp.focus();
+				uniqueInp.select();
+			},function(){
+				//copying to clipboard failed
+			});
+		}
+
+	</script>
+
+	<script>
+
+		const pointsBtn = document.getElementsByClassName("points-btn");
+		function radioSelectPoint(this_obj) {
+			this_obj.children[0].checked = true;
+			for(i=0;i<3;i++){
+				pointsBtn[i].classList.remove("clicked");
+			}
+			this_obj.classList.add("clicked");
+		}
+
+	</script>
+
+	{% if message %}
+    <!-- Popop Model for Warning or any Message -->
+    <div class="modal modal-fade" id="message-modal">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="d-flex justify-content-between">
+              <h5 style="font-family:calibri">{{ message }}</h5>
+              <button type="button" class="close" onfocus="this.style.outline='none'" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      $("#message-modal").modal('show');
+    </script>
+  {% endif %}
+
+{% endblock content %}

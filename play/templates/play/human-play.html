@@ -1,0 +1,223 @@
+{% extends 'home/base.html' %}
+
+{% load static %}
+
+{% block style %}
+
+{% endblock style %}
+
+{% block content %}
+
+	<section id="body" class="mt-3">
+
+		<div class="container text-center text-light mb-1">
+			<h5 class="game-message" data-points="{{ gamePoints }}">{{ playerA }} <span style="color:#fffaa4"><b><i>Vs.</i></b></span> {{ playerB }} [<span style="color:#54e346">{{ gamePoints }} points</span>]</h5>
+		</div>
+
+		<div class="container">
+			<table class="table table-bordered table-dark text-center">
+			  <thead>
+			    <tr>
+			      <th scope="col">You</th>
+			      <th scope="col">{{ playerB }}</th>
+			    </tr>
+			  </thead>
+			  
+			  <tbody>
+			    <tr>
+			      <td class="pA_td"><img src="https://i.pinimg.com/originals/65/ba/48/65ba488626025cff82f091336fbf94bb.gif" class="rps-icon pA-icon"/></td>
+			      <td class="pB_td"><img src="https://i.pinimg.com/originals/65/ba/48/65ba488626025cff82f091336fbf94bb.gif" class="rps-icon pB-icon"/></td>
+			    </tr>
+
+			    <tr class="bg-warning">
+			      <td class="text-dark font-weight-bolder">Score : <span class="pA-score">0</span></td>
+			      <td class="text-dark font-weight-bolder">Score : <span class="pB-score">0</span></td>
+			    </tr>
+			  </tbody>
+
+			</table>
+		</div>
+	</section>
+
+	<script>
+		const keyChoices=["r","p","s"],imageChoices=["rock","paper","scissor"],d=document,pA_icon_elem=d.getElementsByClassName("pA-icon")[0],pB_icon_elem=d.getElementsByClassName("pB-icon")[0],pA_score_elem=d.getElementsByClassName("pA-score")[0],pB_score_elem=d.getElementsByClassName("pB-score")[0],game_message_elem=d.getElementsByClassName("game-message")[0],gamePoint=game_message_elem.getAttribute("data-points");var pA_score=0,pB_score=0,canType=!0;function resetChoice(){$.ajax({type:"GET",url:"{% url 'play:reset-choice' %}",data:{reset_choice:!0},success:function(e){e.successfullReset&&(pA_icon_elem.setAttribute("src","https://i.pinimg.com/originals/65/ba/48/65ba488626025cff82f091336fbf94bb.gif"),pB_icon_elem.setAttribute("src","https://i.pinimg.com/originals/65/ba/48/65ba488626025cff82f091336fbf94bb.gif"))}})}function userWins(){$(".result-tag").html("Congratulation 😊😎"),$(".result-message").html("You won the game against {{ playerB }}.")}function opponentWins(){$(".result-tag").html("Oops 😥😥"),$(".result-message").html("You lost the game against {{ playerB }}.")}d.onkeyup=function(){if(!canType)return!1;if(pA_score==gamePoint||pB_score==gamePoint)return!1;if(keyPressed=event.key.toLowerCase(),keyChoices.includes(keyPressed)){keyPosition=keyChoices.indexOf(keyPressed),0==keyPosition?pA_icon_elem.setAttribute("src","{% static 'home/image/rock.png' %}"):1==keyPosition?pA_icon_elem.setAttribute("src","{% static 'home/image/paper.png' %}"):pA_icon_elem.setAttribute("src","{% static 'home/image/scissor.png' %}"),s();var e=setInterval(s,3e3);function s(){$.ajax({type:"GET",url:"{% url 'play:human-compare' %}",data:{userChose:imageChoices[keyPosition]},success:function(s){if(s.opponentSelected){clearInterval(e);let t=s.playerB_Choice;0==t?pB_icon_elem.setAttribute("src","{% static 'home/image/rock.png' %}"):1==t?pB_icon_elem.setAttribute("src","{% static 'home/image/paper.png' %}"):pB_icon_elem.setAttribute("src","{% static 'home/image/scissor.png' %}");let o=s.pA_Win;"tie"!=o?(game_message_elem.innerHTML=o?"You Win 1 Point":"You Loose",o?pA_score+=1:pB_score+=1):game_message_elem.innerHTML="It's a tie",pA_score_elem.innerHTML=pA_score,pB_score_elem.innerHTML=pB_score,setTimeout(function(){resetChoice(),pA_score==gamePoint||pB_score==gamePoint?(pA_score==gamePoint?userWins():opponentWins(),$("#result-message-modal").modal({show:!0,backdrop:"static",keyboard:!1}),canType=!1,game_message_elem.innerHTML="Game Over",setTimeout(function(){return location.reload()},1e4)):(canType=!0,game_message_elem.innerHTML="Next Turn")},1500)}else canType=!1}})}}else alert("You have only three Choices - r,p,s")};
+	</script>
+
+	<div class="modal modal-fade" id="result-message-modal">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="result-tag"></h3>
+					<button type="button" class="close" onfocus="this.style.outline='none'" data-dismiss="modal"><span>&times;</span></button>
+				</div>
+				<div class="modal-body">
+					<p class="lead result-message"></p>
+					<div class="d-flex justify-content-center">
+						<a href="#" class="mr-2" onclick='location.reload()'>Play Again</a>
+						<a href="{% url 'play:go-home' %}" class="ml-2">Go Home</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div> 
+
+
+	{% if message or instruction %}
+    <!-- Popop Model for Warning or any Message -->
+    <div class="modal modal-fade" id="message-modal">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="d-flex justify-content-between">
+              <h5 style="font-family:calibri">{% if message %}{{ message }}{% else %}{{ instruction|safe }}{% endif %}</h5>
+              <button type="button" class="close" onfocus="this.style.outline='none'" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      $("#message-modal").modal('show');
+    </script>
+
+	<!-- <script>
+		/*
+		r - rock
+		p - paper
+		s - scissor
+
+		pA - You
+		pB - Opponent
+		*/
+		const keyChoices = ['r','p','s'];
+		const imageChoices = ['rock','paper','scissor'];
+
+		const d = document;
+		const pA_icon_elem = d.getElementsByClassName("pA-icon")[0];
+		const pB_icon_elem = d.getElementsByClassName("pB-icon")[0];	
+		const pA_score_elem = d.getElementsByClassName("pA-score")[0];
+		const pB_score_elem = d.getElementsByClassName("pB-score")[0];
+		const game_message_elem = d.getElementsByClassName("game-message")[0];
+		const gamePoint = game_message_elem.getAttribute('data-points');
+
+		var pA_score = 0;
+		var pB_score = 0; 
+		var canType = true;
+		
+		d.onkeyup = function() {
+			if(canType) {
+				if(pA_score == gamePoint || pB_score == gamePoint) { return false;/*Game is over and winnner is decided*/}
+				else {
+					//Game is still ON
+					keyPressed = event.key.toLowerCase();
+					if(keyChoices.includes(keyPressed)) {
+						//keypressed is r,p,s
+						keyPosition = keyChoices.indexOf(keyPressed);
+						if(keyPosition == 0) {//rock
+							pA_icon_elem.setAttribute("src","{% static 'home/image/rock.png' %}");
+						}else if(keyPosition == 1) {//paper
+							pA_icon_elem.setAttribute("src","{% static 'home/image/paper.png' %}");
+						}else {//scissor
+							pA_icon_elem.setAttribute("src","{% static 'home/image/scissor.png' %}");
+						}
+
+						checkResult();
+						var waitForOpponent = setInterval(checkResult,3000);
+						function checkResult() {
+							$.ajax({
+								type:'GET',
+								url:"{% url 'play:human-compare' %}",
+								data:{
+									'userChose':imageChoices[keyPosition]
+								},
+								success:function(json) {
+									if(json.opponentSelected) {
+										//Opponent has selected his choice, User can go for next choice
+										clearInterval(waitForOpponent);
+										let pBChoice = json.playerB_Choice;
+										if(pBChoice == 0) {
+											pB_icon_elem.setAttribute("src","{% static 'home/image/rock.png' %}");
+										}else if(pBChoice == 1) {
+											pB_icon_elem.setAttribute("src","{% static 'home/image/paper.png' %}");
+										}else {
+											pB_icon_elem.setAttribute("src","{% static 'home/image/scissor.png' %}");
+										}
+										let pA_Win = json.pA_Win
+										if(pA_Win != "tie") {
+											(pA_Win)?game_message_elem.innerHTML="You Win 1 Point":game_message_elem.innerHTML="You Loose";
+											(pA_Win)?pA_score+=1:pB_score+=1;
+										}else { //Its a tie
+											game_message_elem.innerHTML="It's a tie";
+										}
+										pA_score_elem.innerHTML = pA_score;
+										pB_score_elem.innerHTML = pB_score;
+										//Game start again and now he can select his next choice
+										setTimeout(function(){
+											resetChoice();
+											if (pA_score == gamePoint || pB_score == gamePoint) {
+												(pA_score == gamePoint)?userWins():opponentWins();
+												$("#result-message-modal").modal({
+													show:true,
+													backdrop:'static',
+													keyboard:false
+												});
+												canType = false;
+												game_message_elem.innerHTML = "Game Over";
+												setTimeout(function(){
+													return location.reload();
+												},10000)
+											}else {
+												canType = true;
+												game_message_elem.innerHTML = "Next Turn";
+											}
+										},1500);									
+									}else{
+										//Opponent has not selected yet, User cant go for next choice
+										canType = false;
+									}
+								}
+							});
+						}
+					}
+					else {
+						//keypressed is not r,p,s
+						alert("You have only three Choices - r,p,s");
+					}
+				}
+			}else {return false;}
+			
+		}
+
+		function resetChoice() {
+			$.ajax({
+				type:"GET",
+				url:"{% url 'play:reset-choice' %}",
+				data:{
+					'reset_choice':true,
+				},
+				success:function(json) {
+					if(json.successfullReset) {
+						pA_icon_elem.setAttribute("src","https://i.pinimg.com/originals/65/ba/48/65ba488626025cff82f091336fbf94bb.gif");
+						pB_icon_elem.setAttribute("src","https://i.pinimg.com/originals/65/ba/48/65ba488626025cff82f091336fbf94bb.gif");
+					}
+				}
+			});
+		}	
+
+		function userWins() {
+			$(".result-tag").html("Congratulation 😊😎");
+			$(".result-message").html("You won the game against {{ playerB }}.");
+		}	
+		function opponentWins() {
+			$(".result-tag").html("Oops 😥😥");
+			$(".result-message").html("You lost the game against {{ playerB }}.");
+		}
+
+	</script> -->
+
+  {% endif %}
+
+{% endblock content %}
