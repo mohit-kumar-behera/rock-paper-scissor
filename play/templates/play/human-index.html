@@ -45,13 +45,13 @@
 					  <div class="form-group mt-3">
 						  <div class="radio row">
 						  	<div class="col-lg-4">	
-						  		<button type="button" class="rps-btn points-btn human pl-4 pr-4 mt-2 rounded w-100" onclick="radioSelectPoint(this)">10 Pointer<input type="radio" name="points" required value="10"></button>
+						  		<button type="button" class="rps-btn points-btn human pl-4 pr-4 mt-2 rounded w-100">10 Pointer<input type="radio" name="points" required value="10"></button>
 						  	</div>
 						  	<div class="col-lg-4">
-						  		<button type="button" class="rps-btn points-btn human pl-4 pr-4 mt-2 rounded w-100" onclick="radioSelectPoint(this)">15 Pointer<input type="radio" name="points" required value="15"></button>
+						  		<button type="button" class="rps-btn points-btn human pl-4 pr-4 mt-2 rounded w-100">15 Pointer<input type="radio" name="points" required value="15"></button>
 						  	</div>
 						  	<div class="col-lg-4">
-						  		<button type="button" class="rps-btn points-btn human pl-4 pr-4 mt-2 rounded w-100" onclick="radioSelectPoint(this)">20 Pointer<input type="radio" name="points" required value="20"></button>
+						  		<button type="button" class="rps-btn points-btn human pl-4 pr-4 mt-2 rounded w-100">20 Pointer<input type="radio" name="points" required value="20"></button>
 						  	</div>					    
 						  </div>
 						</div>
@@ -73,45 +73,6 @@
 		</div>
 	</section>
 
-	<script>
-		$(function(){
-			$('[data-toggle="tooltip"]').tooltip();
-		})
-	</script>
-
-	<script>
-		const copyBtn = document.getElementsByClassName("copy-btn")[0];
-		const uniqueInp = document.getElementById("unique-id");
-		var shareText = document.getElementsByClassName("share-text")[0];
-		
-		copyBtn.onclick = function() {
-			uniqueInpVal = uniqueInp.getAttribute("value");
-
-			navigator.clipboard.writeText(uniqueInpVal).then(function(){
-				//copying to clipboard successfull
-				shareText.innerHTML = "ID Copied successfully"
-				uniqueInp.focus();
-				uniqueInp.select();
-			},function(){
-				//copying to clipboard failed
-			});
-		}
-
-	</script>
-
-	<script>
-
-		const pointsBtn = document.getElementsByClassName("points-btn");
-		function radioSelectPoint(this_obj) {
-			this_obj.children[0].checked = true;
-			for(i=0;i<3;i++){
-				pointsBtn[i].classList.remove("clicked");
-			}
-			this_obj.classList.add("clicked");
-		}
-
-	</script>
-
 	{% if message %}
     <!-- Popop Model for Warning or any Message -->
     <div class="modal modal-fade" id="message-modal">
@@ -129,9 +90,13 @@
       </div>
     </div>
 
-    <script>
-      $("#message-modal").modal('show');
-    </script>
+    <script>$("#message-modal").modal('show');</script>
+	<script>$(function() { $('[data-toggle="tooltip"]').tooltip(); })</script>
   {% endif %}
 
 {% endblock content %}
+
+{% block script %}
+	<script type="text/javascript" src="{% static 'js/clipboard.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/point-select.js' %}"></script>
+{% endblock script %}
